@@ -6,7 +6,6 @@ import tempfile
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
-from PIL import Image as PILImage
 
 # Load the trained model
 model_path = 'brain_tumor_ann_model.h5'
@@ -49,9 +48,9 @@ tumor_advice = {
         )
     },
     "normal": {
-        'medications': 'No specific medications are required for a normal MRI result.',
-        'doctors': 'Regular check-ups with a general physician are recommended.',
-        'diets': 'Maintain a balanced diet to support overall health.'
+        'medications': 'No specific medications for a normal brain MRI.',
+        'doctors': 'Consult a general physician or neurologist for routine check-ups.',
+        'diets': 'Maintain a balanced diet for overall health.'
     }
 }
 
@@ -74,7 +73,8 @@ def get_advice(tumor_type):
     advice = tumor_advice.get(tumor_type, {
         'medications': 'No advice available.',
         'doctors': 'No advice available.',
-        'diets': 'No advice available.'
+        'diets': 'No advice available.',
+        'types_of_tumors': 'No advice available.'
     })
     return advice
 
@@ -88,13 +88,10 @@ if uploaded_file is not None:
         temp_file.write(uploaded_file.read())
         temp_file_path = temp_file.name
 
-    # Resize the uploaded image
-    uploaded_image = PILImage.open(temp_file_path)
-    resized_image = uploaded_image.resize((400, 400))  # Resize the image for display
-    st.image(resized_image, caption='Uploaded Image.', use_column_width=False)
+    st.image(temp_file_path, caption='Uploaded Image.', use_column_width=True)
 
     # Predict the tumor type
-    tumor_type, prediction_probabilities = predict_tumor_type(temp_file_path)
+    tumor_type, raw_predictions = predict_tumor_type(temp_file_path)
     st.subheader(f'Predicted Tumor Type: {tumor_type}')
 
     # Get advice
@@ -103,27 +100,27 @@ if uploaded_file is not None:
     st.write(f"**Medications:** {advice['medications']}")
     st.write(f"**Doctors:** {advice['doctors']}")
     st.write(f"**Diets:** {advice['diets']}")
+    if tumor_type == 'tumor':
+        st.write(f"**Types of Tumors:** {advice['types_of_tumors']}")
 
-    # Remove the temporary file
-    os.remove(temp_file_path)
-
-    # Display prediction probabilities
+    # Plotting probabilities
     st.subheader('Prediction Probabilities:')
-
-    # Bar chart
+    fig, ax = plt.subplots(figsize=(10, 6))
     class_labels = ['Normal', 'Tumor']
-    fig, ax = plt.subplots(figsize=(8, 4))  # Adjust the size here
-    sns.barplot(x=class_labels, y=prediction_probabilities, ax=ax)
+    sns.barplot(x=class_labels, y=raw_predictions, ax=ax)
     ax.set_ylabel('Probability')
     ax.set_xlabel('Tumor Type')
     ax.set_title('Probability Distribution of Tumor Types')
     st.pyplot(fig)
 
     # Pie chart
-    fig, ax = plt.subplots(figsize=(8, 4))  # Adjust the size here
-    ax.pie(prediction_probabilities, labels=class_labels, autopct='%1.1f%%', startangle=90)
-    ax.set_title('Probability Distribution of Tumor Types')
-    st.pyplot(fig)
+    fig_pie, ax_pie = plt.subplots(figsize=(8, 8))
+    ax_pie.pie(raw_predictions, labels=class_labels, autopct='%1.1f%%', startangle=90, colors=['#ff9999','#66b3ff'])
+    ax_pie.set_title('Probability Distribution of Tumor Types')
+    st.pyplot(fig_pie)
+
+    # Remove the temporary file
+    os.remove(temp_file_path)
 
 st.markdown("""
     <style>
