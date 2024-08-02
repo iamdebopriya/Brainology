@@ -121,26 +121,28 @@ if uploaded_file is not None:
 
     # Remove the temporary file
     os.remove(temp_file_path)
-
 st.markdown("""
     <style>
     .stApp {
-        background: linear-gradient(to right, #ffff00, #ff6600); /* Yellow to orange gradient */
+        background: linear-gradient(to right, #ffffff, #a56dff); /* White to violet gradient */
     }
     .stTitle {
-        color: purple; /* Heading color */
+        color: #6a0dad; /* Violet color for titles */
         font-size: 2em; /* Title size */
     }
+    .stText {
+        color: #6a0dad; /* Violet color for text */
+    }
     .stButton > button {
-        background-color: #007bff; /* Button background color */
-        color: #fff; /* Button text color */
+        background-color: #6a0dad; /* Violet background for buttons */
+        color: #fff; /* White text color */
         border: none;
         padding: 10px 20px;
         border-radius: 5px;
         cursor: pointer;
     }
     .stButton > button:hover {
-        background-color: #0056b3; /* Button hover color */
+        background-color: #4b0082; /* Darker violet for button hover */
     }
     </style>
 """, unsafe_allow_html=True)
