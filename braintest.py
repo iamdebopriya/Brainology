@@ -124,7 +124,7 @@ if uploaded_file is not None:
 st.markdown("""
     <style>
     .stApp {
-        background: linear-gradient(to right, #6F4F28, #a56dff); /* White to violet gradient */
+        background: linear-gradient(to right, #98FF98, #a56dff,#FFD700); 
     }
     .stTitle {
         color: #6a0dad; /* Violet color for titles */
